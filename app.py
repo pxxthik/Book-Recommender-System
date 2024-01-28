@@ -5,6 +5,7 @@ import streamlit as st
 books_matrix = pickle.load(open("artifacts/books_matrix.pkl", "rb"))
 model = pickle.load(open("artifacts/model.pkl", "rb"))
 books = pickle.load(open("artifacts/books.pkl", "rb"))
+popular = pickle.load(open("artifacts/popular.pkl", "rb"))
 
 def recommend_books(book_name):
     book_id = np.where(books_matrix.index == book_name)[0][0]
@@ -42,3 +43,24 @@ if st.button("Recommend"):
             st.text(f"{book['num_ratings']}+ Reviews")
         with col2:
             st.image(book['image_m'])
+
+st.header("Popular Books")
+
+for i in range(5):
+    k = i*5
+    col1, col2, col3, col4, col5 = st.columns(5)
+    with col1:
+        st.image(popular[k][6])
+        st.text(popular[k][1])
+    with col2:
+        st.image(popular[k+1][6])
+        st.text(popular[k+1][1])
+    with col3:
+        st.image(popular[k+2][6])
+        st.text(popular[k+2][1])
+    with col4:
+        st.image(popular[k+3][6])
+        st.text(popular[k+3][1])
+    with col5:
+        st.image(popular[k+4][6])
+        st.text(popular[k+4][1])
