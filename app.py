@@ -56,23 +56,18 @@ def get_recommendations(book_name):
         st.markdown("""---""")
         i+= 1
 
-book_list = books_matrix.index.values.tolist()
-if clicked_book:
-    book_list.insert(0, clicked_book)
-
-selected_book = st.selectbox(
-    "Type or Select a Book", book_list)
-
-if st.button("Recommend"):
-    st.experimental_set_query_params(book=selected_book)
-    st.experimental_rerun()
-
 
 if clicked_book:
     get_recommendations(clicked_book)
     
 
 if not clicked_book:
+    selected_book = st.selectbox(
+        "Type or Select a Book", books_matrix.index)
+
+    if st.button("Recommend"):
+        get_recommendations(selected_book)
+
     st.header("Popular Books")
     popular = pickle.load(open("artifacts/popular.pkl", "rb"))
 
@@ -93,4 +88,4 @@ if not clicked_book:
 
     if img:
         st.experimental_set_query_params(book=popular_books_title[img])
-        st.experimental_rerun()
+        st.rerun()
