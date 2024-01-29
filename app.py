@@ -43,9 +43,8 @@ if st.button("Recommend"):
     i = 1
 
     for book in recommendations:
-        chances = round((1-(distances[i]/distances[-1]))*100, 2)
-
-        chances += 20
+        chances = ((1-(distances[i]/distances[-1]))*100) + 20
+        chances = round(chances, 2)
 
         col1, col2 = st.columns([0.7, 0.3])
         with col1:
