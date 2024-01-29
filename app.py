@@ -1,11 +1,11 @@
 import pickle
 import numpy as np
 import streamlit as st
-from streamlit_image_select import image_select
 
 books_matrix = pickle.load(open("artifacts/books_matrix.pkl", "rb"))
 model = pickle.load(open("artifacts/model.pkl", "rb"))
 books = pickle.load(open("artifacts/books.pkl", "rb"))
+popular = pickle.load(open("artifacts/popular.pkl", "rb"))
 
 def recommend_books(book_name):
     book_id = np.where(books_matrix.index == book_name)[0][0]
@@ -26,22 +26,26 @@ def recommend_books(book_name):
     
     return data, distances
 
-clicked_book = st.experimental_get_query_params().get('book', [None])[0]
 st.set_page_config(
     page_title="Book Recommender System",
     page_icon="📚"
 )
+
 st.title("Book Recommender System")
 
-def get_recommendations(book_name):
-    recommendations, distances = recommend_books(book_name)
+selected_book = st.selectbox(
+    "Type or Select a Book", books_matrix.index)
+
+if st.button("Recommend"):
+    recommendations, distances = recommend_books(selected_book)
     distances = distances[0]
 
     i = 1
 
     for book in recommendations:
-        chances = ((1-(distances[i]/distances[-1]))*100)+20
-        chances = round(chances, 2)
+        chances = round((1-(distances[i]/distances[-1]))*100, 2)
+
+        chances += 20
 
         col1, col2 = st.columns([0.7, 0.3])
         with col1:
@@ -56,36 +60,23 @@ def get_recommendations(book_name):
         st.markdown("""---""")
         i+= 1
 
+st.header("Popular Books")
 
-if clicked_book:
-    get_recommendations(clicked_book)
-    
-
-if not clicked_book:
-    selected_book = st.selectbox(
-        "Type or Select a Book", books_matrix.index)
-
-    if st.button("Recommend"):
-        get_recommendations(selected_book)
-
-    st.header("Popular Books")
-    popular = pickle.load(open("artifacts/popular.pkl", "rb"))
-
-    popular_books_image = []
-    popular_books_title = []
-
-    for book in popular:
-        popular_books_image.append(book[6])
-        popular_books_title.append(book[1])
-
-    img = image_select(
-        label="Select a cat",
-        images=popular_books_image,
-        captions=popular_books_title,
-        index=0,
-        return_value="index"
-    )
-
-    if img:
-        st.experimental_set_query_params(book=popular_books_title[img])
-        st.rerun()
+for i in range(5):
+    k = i*5
+    col1, col2, col3, col4, col5 = st.columns(5)
+    with col1:
+        st.image(popular[k][6])
+        st.text(popular[k][1])
+    with col2:
+        st.image(popular[k+1][6])
+        st.text(popular[k+1][1])
+    with col3:
+        st.image(popular[k+2][6])
+        st.text(popular[k+2][1])
+    with col4:
+        st.image(popular[k+3][6])
+        st.text(popular[k+3][1])
+    with col5:
+        st.image(popular[k+4][6])
+        st.text(popular[k+4][1])
