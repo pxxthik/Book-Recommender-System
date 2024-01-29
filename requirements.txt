@@ -1,3 +1,4 @@
 streamlit
 numpy
 scikit-learn
+streamlit_image_select
